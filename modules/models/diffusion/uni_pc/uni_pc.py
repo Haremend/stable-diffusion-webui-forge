@@ -84,7 +84,7 @@ class NoiseScheduleVP:
         # For discrete-time DPMs, given betas (the beta array for n = 0, 1, ..., N - 1):
         >>> ns = NoiseScheduleVP('discrete', betas=betas)
 
-        # For discrete-time DPMs, given alphas_cumprod (the \hat{alpha_n} array for n = 0, 1, ..., N - 1):
+        # For discrete-time DPMs, given alphas_cumprod (the \\hat{alpha_n} array for n = 0, 1, ..., N - 1):
         >>> ns = NoiseScheduleVP('discrete', alphas_cumprod=alphas_cumprod)
 
         # For continuous-time DPMs (VPSDE), linear schedule:
