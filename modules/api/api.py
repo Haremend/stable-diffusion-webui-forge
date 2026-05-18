@@ -484,11 +484,11 @@ class Api:
                 p.outpath_grids = opts.outdir_txt2img_grids
                 p.outpath_samples = opts.outdir_txt2img_samples
 
-                    try:
-                        import modules.processing as processing
-                        processing.log_generation_params(p)
-                    except Exception:
-                        pass
+                try:
+                    import modules.processing as processing
+                    processing.log_generation_params(p)
+                except Exception:
+                    pass
 
                 try:
                     shared.state.begin(job="scripts_txt2img")
@@ -562,11 +562,11 @@ class Api:
                 p.outpath_grids = opts.outdir_img2img_grids
                 p.outpath_samples = opts.outdir_img2img_samples
 
-                    try:
-                        import modules.processing as processing
-                        processing.log_generation_params(p)
-                    except Exception:
-                        pass
+                try:
+                    import modules.processing as processing
+                    processing.log_generation_params(p)
+                except Exception:
+                    pass
 
                 try:
                     shared.state.begin(job="scripts_img2img")
