@@ -45,25 +45,23 @@ opt_f = 8
 
 def log_generation_params(p: StableDiffusionProcessing):
     """打印/记录生成参数"""
-    logger = logging.getLogger(__name__)
-
     try:
         mode = 'txt2img' if not isinstance(p, StableDiffusionProcessing) and getattr(p, 'init_images', None) is None else 'img2img' if getattr(p, 'init_images', None) else 'txt2img'
     except Exception:
         mode = 'unknown'
 
-    logger.info("\n%s", "=" * 60)
-    logger.info("[Generation Started]")
-    logger.info("Mode: %s", mode)
-    logger.info("Prompt: %s", getattr(p, 'prompt', None))
-    logger.info("Negative Prompt: %s", getattr(p, 'negative_prompt', None))
-    logger.info("Width: %s, Height: %s", getattr(p, 'width', None), getattr(p, 'height', None))
-    logger.info("Steps: %s", getattr(p, 'steps', None))
-    logger.info("CFG Scale: %s", getattr(p, 'cfg_scale', None))
-    logger.info("Sampler: %s", getattr(p, 'sampler_name', None))
-    logger.info("Seed: %s", getattr(p, 'seed', None))
-    logger.info("Batch Size: %s, Iterations: %s", getattr(p, 'batch_size', None), getattr(p, 'n_iter', None))
-    logger.info("%s\n", "=" * 60)
+    print("\n" + "=" * 60)
+    print("[Generation Started]")
+    print(f"Mode: {mode}")
+    print(f"Prompt: {getattr(p, 'prompt', None)}")
+    print(f"Negative Prompt: {getattr(p, 'negative_prompt', None)}")
+    print(f"Width: {getattr(p, 'width', None)}, Height: {getattr(p, 'height', None)}")
+    print(f"Steps: {getattr(p, 'steps', None)}")
+    print(f"CFG Scale: {getattr(p, 'cfg_scale', None)}")
+    print(f"Sampler: {getattr(p, 'sampler_name', None)}")
+    print(f"Seed: {getattr(p, 'seed', None)}")
+    print(f"Batch Size: {getattr(p, 'batch_size', None)}, Iterations: {getattr(p, 'n_iter', None)}")
+    print("=" * 60 + "\n")
 
 
 def setup_color_correction(image):
@@ -968,6 +966,17 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
             p.negative_prompts = p.all_negative_prompts[n * p.batch_size:(n + 1) * p.batch_size]
             p.seeds = p.all_seeds[n * p.batch_size:(n + 1) * p.batch_size]
             p.subseeds = p.all_subseeds[n * p.batch_size:(n + 1) * p.batch_size]
+
+            # 打印每个批次的 prompt 和 seed（仅在批量生成时）
+            if p.n_iter > 1:
+                try:
+                    print(f"\n[Batch {n + 1}/{p.n_iter}] Generation Parameters:")
+                    for i, (prompt, seed) in enumerate(zip(p.prompts, p.seeds)):
+                        print(f"  Prompt {i + 1}: {prompt}")
+                        print(f"  Seed {i + 1}: {seed}")
+                    print("-" * 40)
+                except Exception:
+                    pass
 
             latent_channels = shared.sd_model.forge_objects.vae.latent_channels
             p.rng = rng.ImageRNG((latent_channels, p.height // opt_f, p.width // opt_f), p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, seed_resize_from_h=p.seed_resize_from_h, seed_resize_from_w=p.seed_resize_from_w)
