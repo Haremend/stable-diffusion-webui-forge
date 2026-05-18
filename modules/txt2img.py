@@ -124,6 +124,11 @@ def txt2img_upscale_function(id_task: str, request: gr.Request, gallery, gallery
 def txt2img_function(id_task: str, request: gr.Request, *args):
     p = txt2img_create_processing(id_task, request, *args)
 
+    try:
+        processing.log_generation_params(p)
+    except Exception:
+        pass
+
     with closing(p):
         processed = modules.scripts.scripts_txt2img.run(p, *p.script_args)
 

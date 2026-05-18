@@ -119,6 +119,12 @@ def process_batch(p, input, output_dir, inpaint_mask_dir, args, to_scale=False, 
             else:
                 p.override_settings.pop("sd_model_checkpoint", None)
 
+        # 打印每个批次项的 prompt/seed
+        try:
+            print(f"[Batch Item] Prompt: {p.prompt}, Seed: {p.seed}")
+        except Exception:
+            pass
+
         if output_dir:
             p.outpath_samples = output_dir
             p.override_settings['save_to_dirs'] = False
@@ -227,6 +233,11 @@ def img2img_function(id_task: str, request: gr.Request, mode: int, prompt: str, 
 
     if shared.opts.enable_console_prompts:
         print(f"\nimg2img: {prompt}", file=shared.progress_print_out)
+
+    try:
+        processing.log_generation_params(p)
+    except Exception:
+        pass
 
     with closing(p):
         if is_batch:

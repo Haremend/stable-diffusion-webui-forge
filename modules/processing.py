@@ -43,6 +43,29 @@ opt_C = 4
 opt_f = 8
 
 
+def log_generation_params(p: StableDiffusionProcessing):
+    """打印/记录生成参数"""
+    logger = logging.getLogger(__name__)
+
+    try:
+        mode = 'txt2img' if not isinstance(p, StableDiffusionProcessing) and getattr(p, 'init_images', None) is None else 'img2img' if getattr(p, 'init_images', None) else 'txt2img'
+    except Exception:
+        mode = 'unknown'
+
+    logger.info("\n%s", "=" * 60)
+    logger.info("[Generation Started]")
+    logger.info("Mode: %s", mode)
+    logger.info("Prompt: %s", getattr(p, 'prompt', None))
+    logger.info("Negative Prompt: %s", getattr(p, 'negative_prompt', None))
+    logger.info("Width: %s, Height: %s", getattr(p, 'width', None), getattr(p, 'height', None))
+    logger.info("Steps: %s", getattr(p, 'steps', None))
+    logger.info("CFG Scale: %s", getattr(p, 'cfg_scale', None))
+    logger.info("Sampler: %s", getattr(p, 'sampler_name', None))
+    logger.info("Seed: %s", getattr(p, 'seed', None))
+    logger.info("Batch Size: %s, Iterations: %s", getattr(p, 'batch_size', None), getattr(p, 'n_iter', None))
+    logger.info("%s\n", "=" * 60)
+
+
 def setup_color_correction(image):
     logging.info("Calibrating color correction.")
     correction_target = cv2.cvtColor(np.asarray(image.copy()), cv2.COLOR_RGB2LAB)
@@ -856,6 +879,12 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
         assert(len(p.prompt) > 0)
     else:
         assert p.prompt is not None
+
+    # 打印生成参数
+    try:
+        log_generation_params(p)
+    except Exception:
+        pass
 
     devices.torch_gc()
 
