@@ -52,9 +52,9 @@ class NoiseScheduleVP:
                 The `alphas_cumprod` is the \\hat{alpha_n} arrays in the notations of DDPM. Specifically, DDPMs assume that
                     q_{t_n | 0}(x_{t_n} | x_0) = N ( \\sqrt{\\hat{alpha_n}} * x_0, (1 - \\hat{alpha_n}) * I ).
                 Therefore, the notation \\hat{alpha_n} is different from the notation alpha_t in DPM-Solver. In fact, we have
-                    alpha_{t_n} = \sqrt{\hat{alpha_n}},
+                    alpha_{t_n} = \\sqrt{\\hat{alpha_n}},
                 and
-                    log(alpha_{t_n}) = 0.5 * log(\hat{alpha_n}).
+                    log(alpha_{t_n}) = 0.5 * log(\\hat{alpha_n}).
 
 
         2. For continuous-time DPMs:
