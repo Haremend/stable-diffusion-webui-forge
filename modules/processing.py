@@ -37,6 +37,9 @@ from modules_forge import main_entry
 from backend import memory_management
 from backend.modules.k_prediction import rescale_zero_terminal_snr_sigmas
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 
 # some of those options should not be changed at all because they would break the model, so I removed them from options.
 opt_C = 4
@@ -51,7 +54,10 @@ def log_generation_params(p: StableDiffusionProcessing):
         mode = 'unknown'
 
     print("\n" + "=" * 60)
-    print("[Generation Started]")
+    # 指定北京时区
+    beijing_tz = ZoneInfo("Asia/Shanghai")
+    now_beijing = datetime.now(beijing_tz)
+    print(f"[{now_beijing.strftime('%Y-%m-%d %H:%M:%S')}] Generation Started")
     print(f"Mode: {mode}")
     print(f"Prompt: {getattr(p, 'prompt', None)}")
     print(f"Negative Prompt: {getattr(p, 'negative_prompt', None)}")
