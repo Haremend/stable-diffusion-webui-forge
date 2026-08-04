@@ -922,19 +922,46 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
     p.setup_prompts()
 
     print(f"[DEBUG] p.seed={getattr(p, 'seed', None)}, 局部变量 seed={seed}")
+    # 原版代码
+    # if isinstance(seed, list):
+    #     p.all_seeds = seed
+    #     print(f"[Seed] seed 是列表，直接使用: {p.all_seeds}")
+    # else:
+    #     p.all_seeds = [int(seed) + (x if p.subseed_strength == 0 else 0) for x in range(len(p.all_prompts))]
+    #     print(f"[Seed] seed={seed}, subseed_strength={p.subseed_strength}, 生成 all_seeds: {p.all_seeds}")
+
+    # if isinstance(subseed, list):
+    #     p.all_subseeds = subseed
+    #     print(f"[Subseed] subseed 是列表，直接使用: {p.all_subseeds}")
+    # else:
+    #     p.all_subseeds = [int(subseed) + x for x in range(len(p.all_prompts))]
+    #     print(f"[Subseed] subseed={subseed}, 生成 all_subseeds: {p.all_subseeds}")
+
+    # v2 每次都是随机seed
     if isinstance(seed, list):
         p.all_seeds = seed
         print(f"[Seed] seed 是列表，直接使用: {p.all_seeds}")
     else:
-        p.all_seeds = [int(seed) + (x if p.subseed_strength == 0 else 0) for x in range(len(p.all_prompts))]
+        if p.subseed_strength == 0:
+            # 未启用 Variation 功能：第一张用用户指定的 seed，后面每张都用新的随机数（而非递增+1）
+            p.all_seeds = [
+                int(seed) if x == 0 else int(get_fixed_seed(-1))
+                for x in range(len(p.all_prompts))
+            ]
+        else:
+            # 启用了 Variation 功能：所有图共用同一个 seed，差异交给 subseed 处理
+            p.all_seeds = [int(seed) for _ in range(len(p.all_prompts))]
         print(f"[Seed] seed={seed}, subseed_strength={p.subseed_strength}, 生成 all_seeds: {p.all_seeds}")
 
     if isinstance(subseed, list):
         p.all_subseeds = subseed
         print(f"[Subseed] subseed 是列表，直接使用: {p.all_subseeds}")
     else:
-        p.all_subseeds = [int(subseed) + x for x in range(len(p.all_prompts))]
-        print(f"[Subseed] subseed={subseed}, 生成 all_subseeds: {p.all_subseeds}")
+        p.all_subseeds = [
+            int(subseed) if x == 0 else int(get_fixed_seed(-1))
+            for x in range(len(p.all_prompts))
+        ]
+        print(f"[Subseed] subseed={subseed}, 生成 all_subseeds: {p.all_subseeds}")    
 
     if os.path.exists(cmd_opts.embeddings_dir) and not p.do_not_reload_embeddings:
         # todo: reload ti
