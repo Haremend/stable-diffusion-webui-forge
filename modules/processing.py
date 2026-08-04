@@ -921,6 +921,7 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
     p.fill_fields_from_opts()
     p.setup_prompts()
 
+    print(f"[DEBUG] p.seed={getattr(p, 'seed', None)}, 局部变量 seed={seed}")
     if isinstance(seed, list):
         p.all_seeds = seed
         print(f"[Seed] seed 是列表，直接使用: {p.all_seeds}")
