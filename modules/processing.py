@@ -923,13 +923,17 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
 
     if isinstance(seed, list):
         p.all_seeds = seed
+        print(f"[Seed] seed 是列表，直接使用: {p.all_seeds}")
     else:
         p.all_seeds = [int(seed) + (x if p.subseed_strength == 0 else 0) for x in range(len(p.all_prompts))]
+        print(f"[Seed] seed={seed}, subseed_strength={p.subseed_strength}, 生成 all_seeds: {p.all_seeds}")
 
     if isinstance(subseed, list):
         p.all_subseeds = subseed
+        print(f"[Subseed] subseed 是列表，直接使用: {p.all_subseeds}")
     else:
         p.all_subseeds = [int(subseed) + x for x in range(len(p.all_prompts))]
+        print(f"[Subseed] subseed={subseed}, 生成 all_subseeds: {p.all_subseeds}")
 
     if os.path.exists(cmd_opts.embeddings_dir) and not p.do_not_reload_embeddings:
         # todo: reload ti
